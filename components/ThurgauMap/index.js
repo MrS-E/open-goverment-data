@@ -1,4 +1,4 @@
-import styles from '@/styles/MapTg.module.css'
+import styles from '@/styles/ThuraguMap.module.css'
 export default function Index(){
     return(
         <svg viewBox="70 0 820 500" xmlns="http://www.w3.org/2000/svg">

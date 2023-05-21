@@ -1,11 +1,10 @@
 .lakes path{
     fill: deepskyblue;
-
 }
 
 .municipalities path {
     position: relative;
-    fill: darkgrey;
+    fill: green;
     box-shadow: 1px 1px 1px black;
     stroke: black;
     stroke-width: 0.75px;
