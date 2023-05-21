@@ -9,10 +9,15 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@svgr/webpack": "^8.0.1",
     "leaflet": "^1.9.3",
     "next": "13.4.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "react-leaflet": "^4.2.1"
+    "react-leaflet": "^4.2.1",
+    "styled-components": "^5.3.10"
+  },
+  "resolutions": {
+    "styled-components": "5.3.10"
   }
 }
