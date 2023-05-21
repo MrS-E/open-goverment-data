@@ -3,7 +3,9 @@ import {fetch} from "next/dist/compiled/@edge-runtime/primitives/fetch";
 import Map from '@/components/ThurgauMap'
 import {useEffect, useState} from "react";
 import styled from "styled-components";
+import { PrismaClient } from '@prisma/client'
 
+const prisma = new PrismaClient()
 export const Tooltip = styled.p`
   position: absolute;
   padding: 10px;
@@ -47,7 +49,8 @@ export default function Home(props) {
 
 export async function getStaticProps({params}) {
     const req = await fetch((await (await fetch('https://ckan.opendata.swiss/api/3/action/package_show?id=erneuerbare-elektrizitatsproduktion-nach-energietragern-und-gemeinden')).json()).result.resources[0].uri);
-    const data = await req.json();
+    //const data = await req.json();
+    const data = await prisma.energy.findMany()
 
     return {
         props: {energy: data},

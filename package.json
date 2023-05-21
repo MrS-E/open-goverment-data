@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@prisma/client": "^4.14.1",
     "@svgr/webpack": "^8.0.1",
     "bootstrap": "^5.2.3",
     "leaflet": "^1.9.3",
@@ -20,5 +21,8 @@
   },
   "resolutions": {
     "styled-components": "5.3.10"
+  },
+  "devDependencies": {
+    "prisma": "^4.14.1"
   }
 }
