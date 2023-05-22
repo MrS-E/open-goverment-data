@@ -3,7 +3,6 @@ import {fetch} from "next/dist/compiled/@edge-runtime/primitives/fetch";
 import Map from '@/components/ThurgauMap'
 import Popup from '@/components/Popup'
 import {useEffect, useState} from "react";
-import styled from "styled-components";
 import { PrismaClient } from '@prisma/client'
 
 //const prisma = new PrismaClient()
@@ -19,7 +18,7 @@ export default function Home(props) {
             })
             console.log(result)
             changeEnergy(oldArray => [...oldArray, result])
-            doc.addEventListener('click', (e)=>{
+            doc.addEventListener('click', ()=>{
                 changePopup(true);
                 changeDisplay(result[0])
                 console.log(energy)
@@ -60,7 +59,7 @@ wind: null
 * */
 
 export async function getStaticProps({params}) {
-    const req = await fetch((await (await fetch('https://ckan.opendata.swiss/api/3/action/package_show?id=erneuerbare-elektrizitatsproduktion-nach-energietragern-und-gemeinden')).json()).result.resources.filter(obj=>{return obj.media_type=="application/json"})[0].uri);
+    const req = await fetch((await (await fetch('https://ckan.opendata.swiss/api/3/action/package_show?id=erneuerbare-elektrizitatsproduktion-nach-energietragern-und-gemeinden')).json()).result.resources.filter(obj=>{return obj.media_type==="application/json"})[0].uri);
     const data = await req.json();
     //const data = await prisma.energy.findMany()
 
