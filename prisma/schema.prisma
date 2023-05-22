@@ -7,7 +7,7 @@ datasource db {
   url      = "file:./dev.db"
 }
 
-model energy {
+model erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden {
   id String @id @default(cuid())
   nr_gemeinde String
   biogasanlagen_abwasser Float
