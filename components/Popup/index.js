@@ -1,13 +1,11 @@
 import React from 'react';
-import "./main.css";
-import 'bootstrap/dist/css/bootstrap.min.css';
-import 'bootstrap';
+import styles from '@/styles/Popup.module.css'
 
 function Popup(props) { //simple popup
     if(props.trigger){ //only shows popup if trigger is true
         return(
-            <div className="popup">
-                <div className="popup-inner">
+            <div className={styles.popup}>
+                <div className={styles.popup_inner}>
                     <div>
                         <button className="close-btn" onClick={() => {props.changeTrigger(false)}}>close</button> {/*to close popup*/}
                     </div>

@@ -1,22 +1,16 @@
 import Head from 'next/head'
 import {fetch} from "next/dist/compiled/@edge-runtime/primitives/fetch";
 import Map from '@/components/ThurgauMap'
+import Popup from '@/components/Popup'
 import {useEffect, useState} from "react";
 import styled from "styled-components";
 import { PrismaClient } from '@prisma/client'
 
-const prisma = new PrismaClient()
-export const Tooltip = styled.p`
-  position: absolute;
-  padding: 10px;
-  background: blueviolet;
-  color: hotpink;
-  border-radius: 8px;
-  pointer-events: none;
-`;
+//const prisma = new PrismaClient()
 
 export default function Home(props) {
     const [energy, changeEnergy] = useState(props.energy)
+    const [popup, changePopup] = useState(false)
     useEffect(()=>{
         for(let doc of document.querySelectorAll('path')){
             let result = energy.filter(obj => {
@@ -25,10 +19,7 @@ export default function Home(props) {
             console.log(result)
             changeEnergy(oldArray => [...oldArray, result])
             doc.addEventListener('click', (e)=>{
-                let d = document.querySelector('p')
-                d.removeAttribute("style")
-                d.style.top = `${e.pageY}px`;
-                d.style.left = `${e.pageX}px`;
+                changePopup(true);
             })
         }
         },[]
@@ -41,16 +32,18 @@ export default function Home(props) {
             </Head>
             <main>
                 <Map/>
-                <Tooltip style={"display:none"}>sadf</Tooltip>
+                <Popup changeTrigger={changePopup} trigger={popup}>
+
+                </Popup>
             </main>
         </>
     )
 }
 
 export async function getStaticProps({params}) {
-    const req = await fetch((await (await fetch('https://ckan.opendata.swiss/api/3/action/package_show?id=erneuerbare-elektrizitatsproduktion-nach-energietragern-und-gemeinden')).json()).result.resources[0].uri);
-    //const data = await req.json();
-    const data = await prisma.energy.findMany()
+    const req = await fetch((await (await fetch('https://ckan.opendata.swiss/api/3/action/package_show?id=erneuerbare-elektrizitatsproduktion-nach-energietragern-und-gemeinden')).json()).result.resources.filter(obj=>{return obj.media_type=="application/json"})[0].uri);
+    const data = await req.json();
+    //const data = await prisma.energy.findMany()
 
     return {
         props: {energy: data},
