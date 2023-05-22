@@ -1,16 +1,19 @@
 import Head from 'next/head'
 import Map from '@/components/ThurgauMap'
 import Popup from '@/components/Popup'
-import {useEffect, useState} from "react"
+import {useEffect, useRef, useState} from "react"
 import {PrismaClient} from '@prisma/client'
 import {console} from "next/dist/compiled/@edge-runtime/primitives/console"
 import MapStyle from '@/styles/ThuraguMap.module.css'
+import Slider from '@/components/Tailwind/Slider'
+import { useRouter } from 'next/router';
 
 const prisma = new PrismaClient()
 
 export default function Home(props) {
     const [popup, changePopup] = useState(false)
     const [display, changeDisplay] = useState({})
+    const [year, changeYear] = useState(props.year.max)
     useEffect(() => {
         for(let obj of props.energy){
             let doc = document.getElementById(`${obj.nr_gemeinde}`);
@@ -23,27 +26,35 @@ export default function Home(props) {
         document.getElementsByClassName(MapStyle.lakes)[0].addEventListener('click', ()=>{
             alert("Geehrter Nutzer der Bodensee ist keine Gemeinde. \nBitte klicken Sie nur Gemeinden an.")
         })
-
-        }, [props.energy]
-    )
+    }, [props.energy])
+    useEffect(()=>{
+    }, [year])
     return (
         <>
             <Head>
                 <title>Open Government Data</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
             </Head>
-            <main>
-                <Map/>
-                <Popup changeTrigger={changePopup} trigger={popup}>
-                    <h3 className="text-2xl">{display.gemeinde_name ? display.gemeinde_name : ""}</h3>
-                </Popup>
+            <main className="container relative p-4 grow grid place-items-center">
+                <div className="max-w-[80vmin] flex-shrink-0 min-w-[80vmin]">
+                    <iframe src="http://localhost:3000/2020"></iframe>
+                    {/*<h1 className="mb-2 text-center mt-0 text-3xl font-medium leading-tight text-primary">{year}</h1>
+                    <Map/>
+                    <Slider id={"mapSlider"} min={parseInt(props.year.min)} max={parseInt(props.year.max)}
+                            value={parseInt(props.year.max)} steps={1} text={""} onChange={(e) => {
+                        changeYear(e.target.value)
+                    }}/>
+                    <Popup changeTrigger={changePopup} trigger={popup}>
+                        <h3 className="text-2xl">{display.gemeinde_name ? display.gemeinde_name : ""}</h3>
+                    </Popup>*/}
+                </div>
             </main>
         </>
     )
 }
 
 
-export async function getStaticProps({params}) {
+export async function getStaticProps() {
     function calcTotal(total){
         this.average = total.reduce((sum,a)=>sum+a.total,0)/total.length
 
@@ -111,6 +122,7 @@ export async function getStaticProps({params}) {
                 min: year[year.length - 1].jahr
             },
             energy: data
-        }
+        },
+        revalidate: false
     }
 }

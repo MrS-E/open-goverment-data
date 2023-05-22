@@ -1,6 +1,6 @@
 import React from 'react';
 import styles from '@/styles/Popup.module.css'
-import CloseBtn from "@/components/CloseBtn";
+import CloseBtn from "@/components/Tailwind/CloseBtn";
 
 function Popup(props) { //simple popup
     if(props.trigger){ //only shows popup if trigger is true
