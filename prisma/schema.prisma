@@ -4,22 +4,23 @@ generator client {
 
 datasource db {
   provider = "sqlite"
-  url      = "file:./dev.db"
+  url      = "file:./dev.db?connection_limit=1"
 }
 
 model erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden {
-  id String @id @default(cuid())
   nr_gemeinde String
-  biogasanlagen_abwasser Float
-  biogasanlagen_industrie Float
-  biogasanlagen_landwirtschaft Float
-  biomasse_holz Float
-  einwohner Float
+  biogasanlagen_abwasser Float?
+  biogasanlagen_industrie Float?
+  biogasanlagen_landwirtschaft Float?
+  biomasse_holz Float?
+  einwohner Int?
   gemeinde_name String
   jahr String
-  kehricht Float
-  photovoltaik Float
-  wasserkraft Float
-  wind Float
-  total Float
+  kehricht Float?
+  photovoltaik Float?
+  wasserkraft Float?
+  wind Float?
+  total Float?
+
+  @@id([nr_gemeinde, jahr])
 }
