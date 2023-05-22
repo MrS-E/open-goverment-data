@@ -12,13 +12,14 @@ export default function Home(props) {
     const [popup, changePopup] = useState(false)
     const [display, changeDisplay] = useState({})
     useEffect(() => {
+        console.log(props.energy)
         for(let obj of props.energy){
             let doc = document.getElementById(`${obj.nr_gemeinde}`);
             doc.addEventListener('click', () => {
                 changePopup(true)
                 changeDisplay(obj)
             })
-            doc.classList.add(obj.color)
+            doc.classList.add(MapStyle[obj.color])
         }
         /*for (let doc of document.querySelectorAll('path')) {
                 let result = props.energy.filter(obj => {
@@ -63,7 +64,7 @@ export async function getStaticProps({params}) {
         this.max = total[total.length-1].total
         return this
     }
-    async function fetch(type){
+    async function fetch(type, year){
         switch (type){
             case "year":
                 return await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
@@ -77,7 +78,7 @@ export async function getStaticProps({params}) {
             case "total":
                 return await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
                     where: {
-                        jahr: year[0].jahr
+                        jahr: year
                     },
                     orderBy: {
                         total: 'asc',
@@ -89,18 +90,17 @@ export async function getStaticProps({params}) {
             case "data":
                 return await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
                     where: {
-                        jahr: year[0].jahr
+                        jahr: year
                     }
                 })
         }
     }
-
     function set_color(data, total){
-        total = Object.keys(total).map(el=>{return new Array(total[el], el)}).sort((a,b)=>(a[0] > b[0]) ? -1 : ((b[0] > a[0]) ? 1 : 0))
+        total = Object.keys(total).map(el=>{return new Array(total[el], el)}).sort((a,b)=>(a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0))
         const out = []
         for(let d of data) {
             total.forEach((el) => {
-                if (d.total >= el[0]) d["color"] = el[1];
+                if (d.total >= el[0]) d["color"] = el[1]; console.log(d.nr_gemeinde, d.color);
             })
             out.push(d)
         }
@@ -108,9 +108,9 @@ export async function getStaticProps({params}) {
     }
 
     const year = await fetch("year")
-    const total= new Object(Object.fromEntries(Object.entries(new calcTotal(await fetch("total")))))
-    const data = set_color(await fetch("data"), total)
-
+    const total= new Object(Object.fromEntries(Object.entries(new calcTotal(await fetch("total", year[0].jahr)))))
+    const data = set_color(await fetch("data", year[0].jahr), total)
+    console.log(total)
     return {
         props: {
             year: {

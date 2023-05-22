@@ -4,7 +4,7 @@
 
 .municipalities path {
     position: relative;
-    fill: green;
+    //fill: green;
     box-shadow: 1px 1px 1px black;
     stroke: black;
     stroke-width: 0.75px;
