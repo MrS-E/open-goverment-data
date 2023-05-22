@@ -12,48 +12,23 @@ export default function Home(props) {
     const [popup, changePopup] = useState(false)
     const [display, changeDisplay] = useState({})
     useEffect(() => {
-            for (let doc of document.querySelectorAll('path')) {
+        for(let obj of props.energy){
+            let doc = document.getElementById(`${obj.nr_gemeinde}`);
+            doc.addEventListener('click', () => {
+                changePopup(true)
+                changeDisplay(obj)
+            })
+            doc.classList.add(obj.color)
+        }
+        /*for (let doc of document.querySelectorAll('path')) {
                 let result = props.energy.filter(obj => {
                     return ((obj.nr_gemeinde == doc.id))
                 })
-                const total = Object.keys(props.total).map(el=>{return new Array(props.total[el], el)}).sort((a,b)=>(a[0] > b[0]) ? -1 : ((b[0] > a[0]) ? 1 : 0))
-                console.log(total)
-                total.forEach((el)=>{if(props.energy.total>=el[0]) doc.classList.add(MapStyle[el[1]]); console.log(MapStyle[el[1]])})
-                /*switch(true){
-                    case (props.energy.total<=props.total.min):
-                        doc.classList.add()
-                        break
-                    case (props.energy.total<=props.total.min_min):
-                        doc.classList.add()
-                        break
-                    case (props.energy.total<=props.total.mitte_min):
-                        doc.classList.add()
-                        break
-                    case (props.energy.total<=props.total.max_min):
-                        doc.classList.add()
-                        break
-                    case (props.energy.total<=props.total.average):
-                        doc.classList.add()
-                        break
-                    case (props.energy.total<=props.total.min_max):
-                        doc.classList.add()
-                        break
-                    case (props.energy.total<=props.total.mitte_max):
-                        doc.classList.add()
-                        break
-                    case (props.energy.total<=props.total.max_max):
-                        doc.classList.add()
-                        break
-                    case (props.energy.total<=props.total.max):
-                        doc.classList.add()
-                        break
-
-                }*/
                 doc.addEventListener('click', () => {
                     changePopup(true)
                     changeDisplay(result[0])
                 })
-            }
+            }*/
         }, [props.energy]
     )
     return (
@@ -88,34 +63,56 @@ export async function getStaticProps({params}) {
         this.max = total[total.length-1].total
         return this
     }
+    async function fetch(type){
+        switch (type){
+            case "year":
+                return await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
+                    orderBy: {
+                        jahr: 'desc',
+                    },
+                    select: {
+                        jahr: true
+                    }
+                })
+            case "total":
+                return await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
+                    where: {
+                        jahr: year[0].jahr
+                    },
+                    orderBy: {
+                        total: 'asc',
+                    },
+                    select: {
+                        total: true
+                    }
+                })
+            case "data":
+                return await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
+                    where: {
+                        jahr: year[0].jahr
+                    }
+                })
+        }
+    }
 
-    const year = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
-        orderBy: {
-            jahr: 'desc',
-        },
-        select: {
-            jahr: true
+    function set_color(data, total){
+        total = Object.keys(total).map(el=>{return new Array(total[el], el)}).sort((a,b)=>(a[0] > b[0]) ? -1 : ((b[0] > a[0]) ? 1 : 0))
+        const out = []
+        for(let d of data) {
+            total.forEach((el) => {
+                if (d.total >= el[0]) d["color"] = el[1];
+            })
+            out.push(d)
         }
-    })
-    const data = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
-        where: {
-            jahr: year[0].jahr
-        }
-    })
-    const total = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
-        where: {
-            jahr: year[0].jahr
-        },
-        orderBy: {
-            total: 'asc',
-        },
-        select: {
-            total: true
-        }
-    })
+        return out;
+    }
+
+    const year = await fetch("year")
+    const total= new Object(Object.fromEntries(Object.entries(new calcTotal(await fetch("total")))))
+    const data = set_color(await fetch("data"), total)
+
     return {
         props: {
-            total: new Object(Object.fromEntries(Object.entries(new calcTotal(total)))),
             year: {
                 max: year[0].jahr,
                 min: year[year.length - 1].jahr
