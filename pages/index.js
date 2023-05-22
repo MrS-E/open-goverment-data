@@ -12,7 +12,6 @@ export default function Home(props) {
     const [popup, changePopup] = useState(false)
     const [display, changeDisplay] = useState({})
     useEffect(() => {
-        console.log(props.energy)
         for(let obj of props.energy){
             let doc = document.getElementById(`${obj.nr_gemeinde}`);
             doc.addEventListener('click', () => {
@@ -21,15 +20,10 @@ export default function Home(props) {
             })
             doc.classList.add(MapStyle[obj.color])
         }
-        /*for (let doc of document.querySelectorAll('path')) {
-                let result = props.energy.filter(obj => {
-                    return ((obj.nr_gemeinde == doc.id))
-                })
-                doc.addEventListener('click', () => {
-                    changePopup(true)
-                    changeDisplay(result[0])
-                })
-            }*/
+        document.getElementsByClassName(MapStyle.lakes)[0].addEventListener('click', ()=>{
+            alert("Geehrter Nutzer der Bodensee ist keine Gemeinde. \nBitte klicken Sie nur Gemeinden an.")
+        })
+
         }, [props.energy]
     )
     return (
@@ -100,7 +94,7 @@ export async function getStaticProps({params}) {
         const out = []
         for(let d of data) {
             total.forEach((el) => {
-                if (d.total >= el[0]) d["color"] = el[1]; console.log(d.nr_gemeinde, d.color);
+                if (d.total >= el[0]) d["color"] = el[1]
             })
             out.push(d)
         }
@@ -110,7 +104,6 @@ export async function getStaticProps({params}) {
     const year = await fetch("year")
     const total= new Object(Object.fromEntries(Object.entries(new calcTotal(await fetch("total", year[0].jahr)))))
     const data = set_color(await fetch("data", year[0].jahr), total)
-    console.log(total)
     return {
         props: {
             year: {
