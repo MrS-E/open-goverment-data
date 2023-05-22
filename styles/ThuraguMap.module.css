@@ -9,3 +9,31 @@
     stroke: black;
     stroke-width: 0.75px;
 }
+
+.min{
+    fill:#CC0000;
+}
+.min_min{
+    fill:#B32000;
+}
+.mitte_min{
+    fill:#994000;
+}
+.max_min{
+    fill:#806000;
+}
+.average{
+    fill: #668000;
+}
+.min_max{
+    fill: #4D9F00;
+}
+.mitte_max{
+    fill: #33BF00;
+}
+.max_max{
+    fill: #1ADF00;
+}
+.max{
+    fill: #00FF00;
+}
