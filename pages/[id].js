@@ -38,7 +38,7 @@ export default function Home(props) {
                     <h3 className="text-2xl">{display.meta.gemeinde_name ? display.meta.gemeinde_name : ""}</h3>
                     <div className="grid gris-cols-1 md:grid-cols-2">
                         <div className="grid place-items-center">
-                            <table>
+                            <table className=" hidden md:block">
                                 <thead>
                                     <tr>
                                         <th>Energie Typ</th>
