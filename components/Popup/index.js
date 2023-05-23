@@ -5,7 +5,7 @@ import CloseBtn from "@/components/Tailwind/CloseBtn";
 function Popup(props) { //simple popup
     if(props.trigger){ //only shows popup if trigger is true
         return(
-            <div className={styles.popup}>
+            <div id="bg" className={styles.popup} onClick={(e)=>{if(e.target.id === "bg") props.changeTrigger(false)}}>
                 <div className={styles.popup_inner}>
                     <div>
                         <CloseBtn onClick={() => {props.changeTrigger(false)}}/>
