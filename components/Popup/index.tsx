@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from '../../styles/Popup.module.css'
 import CloseBtn from "../Tailwind/CloseBtn";
-import {boolean} from "zod";
 
 function Popup(props): JSX.Element { //simple popup
     if(props.trigger){ //only shows popup if trigger is true

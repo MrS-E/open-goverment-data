@@ -1,7 +1,7 @@
 import Head from 'next/head'
 import Map from '../components/ThurgauMap'
 import Popup from '../components/Popup'
-import React, {useEffect, useRef, useState} from "react"
+import React, {useEffect} from "react"
 import {PrismaClient} from '@prisma/client'
 import MapStyle from '../styles/ThuraguMap.module.css'
 import Slider from '../components/Tailwind/Slider'

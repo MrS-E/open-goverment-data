@@ -11,14 +11,14 @@ export default async function handler(req : NextApiRequest, res: NextApiResponse
     function calcTotal(total : {total: number}[]): object{
         this.average = total.reduce((sum:number,a:{total:number})=>sum+a.total,0)/total.length
 
-        this.max_min = total.reduce((sum:number,a:{total:number}):number=>a.total<this.average?sum+a.total:sum+0,0)/total.reduce((sum:number,a:{total:number}):number=>a.total<this.average?sum+1:sum+0,0)
-        this.mitte_min = total.reduce((sum:number,a:{total:number}):number=>a.total<this.max_min?sum+a.total:sum+0,0)/total.reduce((sum:number,a:{total:number}):number=>a.total<this.max_min?sum+1:sum+0,0)
-        this.min_min = total.reduce((sum:number,a:{total:number}):number=>a.total<this.mitte_min?sum+a.total:sum+0,0)/total.reduce((sum:number,a:{total:number}):number=>a.total<this.mitte_min?sum+1:sum+0,0)
+        this.max_min = total.reduce((sum:number,a:{total:number}):number=>a.total<this.average?sum+a.total:sum,0)/total.reduce((sum:number,a:{total:number}):number=>a.total<this.average?sum+1:sum,0)
+        this.mitte_min = total.reduce((sum:number,a:{total:number}):number=>a.total<this.max_min?sum+a.total:sum,0)/total.reduce((sum:number,a:{total:number}):number=>a.total<this.max_min?sum+1:sum,0)
+        this.min_min = total.reduce((sum:number,a:{total:number}):number=>a.total<this.mitte_min?sum+a.total:sum,0)/total.reduce((sum:number,a:{total:number}):number=>a.total<this.mitte_min?sum+1:sum,0)
         this.min = total[0].total
 
-        this.min_max = total.reduce((sum:number,a:{total:number}):number=>a.total>this.average?sum+a.total:sum+0,0)/total.reduce((sum:number,a:{total:number}):number=>a.total>this.average?sum+1:sum+0,0)
-        this.mitte_max = total.reduce((sum:number,a:{total:number}):number=>a.total>this.min_max?sum+a.total:sum+0,0)/total.reduce((sum:number,a:{total:number}):number=>a.total>this.min_max?sum+1:sum+0,0)
-        this.max_max = total.reduce((sum:number,a:{total:number}):number=>a.total>this.mitte_max?sum+a.total:sum+0,0)/total.reduce((sum:number,a:{total:number}):number=>a.total>this.mitte_max?sum+1:sum+0,0)
+        this.min_max = total.reduce((sum:number,a:{total:number}):number=>a.total>this.average?sum+a.total:sum,0)/total.reduce((sum:number,a:{total:number}):number=>a.total>this.average?sum+1:sum,0)
+        this.mitte_max = total.reduce((sum:number,a:{total:number}):number=>a.total>this.min_max?sum+a.total:sum,0)/total.reduce((sum:number,a:{total:number}):number=>a.total>this.min_max?sum+1:sum,0)
+        this.max_max = total.reduce((sum:number,a:{total:number}):number=>a.total>this.mitte_max?sum+a.total:sum,0)/total.reduce((sum:number,a:{total:number}):number=>a.total>this.mitte_max?sum+1:sum,0)
         this.max = total[total.length-1].total
         return this
     }
