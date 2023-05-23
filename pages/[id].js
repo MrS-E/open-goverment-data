@@ -39,12 +39,12 @@ export default function Home(props) {
                     <div className="grid gris-cols-1 md:grid-cols-2">
                         <div className="grid place-items-center">
                             <table>
-                                <theah>
+                                <thead>
                                     <tr>
                                         <th>Energie Typ</th>
                                         <th>Prozent</th>
                                     </tr>
-                                </theah>
+                                </thead>
                                 <tbody>
                                 {Object.keys(display.data).map(e=>{
                                     return(
