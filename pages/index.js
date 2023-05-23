@@ -7,46 +7,71 @@ import {console} from "next/dist/compiled/@edge-runtime/primitives/console"
 import MapStyle from '@/styles/ThuraguMap.module.css'
 import Slider from '@/components/Tailwind/Slider'
 import { useRouter } from 'next/router';
+import Graph from "@/components/Graph";
 
 const prisma = new PrismaClient()
 
 export default function Home(props) {
     const [popup, changePopup] = useState(false)
-    const [display, changeDisplay] = useState({})
+    const [display, changeDisplay] = useState({meta:{}, data:{}})
     const [year, changeYear] = useState(props.year.max)
     useEffect(() => {
         for(let obj of props.energy){
-            let doc = document.getElementById(`${obj.nr_gemeinde}`);
+            let doc = document.getElementById(`${obj.meta.nr_gemeinde}`);
             doc.addEventListener('click', () => {
                 changePopup(true)
                 changeDisplay(obj)
+
             })
-            doc.classList.add(MapStyle[obj.color])
+            doc.classList.add(MapStyle[obj.meta.color])
         }
         document.getElementsByClassName(MapStyle.lakes)[0].addEventListener('click', ()=>{
             alert("Geehrter Nutzer der Bodensee ist keine Gemeinde. \nBitte klicken Sie nur Gemeinden an.")
         })
     }, [props.energy])
-    useEffect(()=>{
-    }, [year])
+    useEffect(()=>{}, [year])
     return (
         <>
             <Head>
                 <title>Open Government Data</title>
                 <meta name="viewport" content="width=device-width, initial-scale=1"/>
             </Head>
-            <main className="container relative p-4 grow grid place-items-center">
-                <div className="max-w-[80vmin] flex-shrink-0 min-w-[80vmin]">
-                    <iframe src="http://localhost:3000/2020"></iframe>
-                    {/*<h1 className="mb-2 text-center mt-0 text-3xl font-medium leading-tight text-primary">{year}</h1>
+            <main className="relative p-4 grid place-items-center">
+                <h1 className="text-4xl mb-2 text-center mt-0 font-medium leading-tight text-primary">Strom aus erneuerbaren Energieträgern</h1>
+                <div className="max-w-[90vh] min-w-[90vw]">
                     <Map/>
                     <Slider id={"mapSlider"} min={parseInt(props.year.min)} max={parseInt(props.year.max)}
                             value={parseInt(props.year.max)} steps={1} text={""} onChange={(e) => {
                         changeYear(e.target.value)
                     }}/>
                     <Popup changeTrigger={changePopup} trigger={popup}>
-                        <h3 className="text-2xl">{display.gemeinde_name ? display.gemeinde_name : ""}</h3>
-                    </Popup>*/}
+                        <h3 className="text-2xl">{display.meta.gemeinde_name ? display.meta.gemeinde_name : ""}</h3>
+                        <div className="grid gris-cols-1 md:grid-cols-2">
+                            <div className="grid place-items-center">
+                                <table>
+                                    <theah>
+                                        <tr>
+                                            <th>Energie Typ</th>
+                                            <th>Prozent</th>
+                                        </tr>
+                                    </theah>
+                                    <tbody>
+                                    {Object.keys(display.data).map(e=>{
+                                        return(
+                                            <tr>
+                                                <td>{(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' ')}</td>
+                                                <td>{display.data[e]?display.data[e]:0}</td>
+                                            </tr>
+                                        )
+                                    })}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div className="grid place-items-center">
+                                <Graph data={{labels:Object.keys(display.data).map(e=>(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' ')),datasets:[{data:Object.values(display.data)}]}}/>
+                            </div>
+                        </div>
+                    </Popup>
                 </div>
             </main>
         </>
@@ -69,7 +94,7 @@ export async function getStaticProps() {
         this.max = total[total.length-1].total
         return this
     }
-    async function fetch(type, year){
+    async function fetch(type, year, nr){
         switch (type){
             case "year":
                 return await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
@@ -96,10 +121,35 @@ export async function getStaticProps() {
                 return await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
                     where: {
                         jahr: year
+                    },
+                    select:{
+                        nr_gemeinde: true,
+                        gemeinde_name: true,
+                        einwohner: true,
+                        total: true,
                     }
                 })
+            case "traeger":
+                return await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findUnique({
+                    where: {
+                        nr_gemeinde_jahr: {
+                            jahr: year,
+                            nr_gemeinde: nr
+                        }
+                    },
+                    select:{
+                        biogasanlagen_abwasser: true,
+                        biogasanlagen_industrie: true,
+                        biogasanlagen_landwirtschaft: true,
+                        biomasse_holz: true,
+                        kehricht: true,
+                        photovoltaik: true,
+                        wasserkraft: true,
+                        wind: true,
+                    }
+                })
+            }
         }
-    }
     function set_color(data, total){
         total = Object.keys(total).map(el=>{return new Array(total[el], el)}).sort((a,b)=>(a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0))
         const out = []
@@ -115,13 +165,20 @@ export async function getStaticProps() {
     const year = await fetch("year")
     const total= new Object(Object.fromEntries(Object.entries(new calcTotal(await fetch("total", year[0].jahr)))))
     const data = set_color(await fetch("data", year[0].jahr), total)
+    const energy = []
+    for(let d of data){
+        energy.push({
+            meta: d,
+            data: await fetch("traeger", year[0].jahr, d.nr_gemeinde)
+        })
+    }
     return {
         props: {
             year: {
                 max: year[0].jahr,
                 min: year[year.length - 1].jahr
             },
-            energy: data
+            energy: energy,
         },
         revalidate: false
     }
