@@ -1,4 +1,4 @@
-import styles from '@/styles/ThuraguMap.module.css'
+import styles from '../../styles/ThuraguMap.module.css'
 export default function Index(props){
     return(
         <svg viewBox="70 0 820 500" xmlns="http://www.w3.org/2000/svg" className={props.className?props.className:""}>

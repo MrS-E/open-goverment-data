@@ -1,5 +1,4 @@
 import React from 'react';
-
 const Slider = (props) => {
     return (<>
             <label htmlFor={props.id ? props.id : "slider"} className="mb-2 inline-block text-neutral-700 dark:text-neutral-200">{props.text?props.text:""}</label>

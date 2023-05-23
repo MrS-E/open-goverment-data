@@ -1,10 +1,10 @@
 import Head from 'next/head'
-import Map from '@/components/ThurgauMap'
-import Popup from '@/components/Popup'
+import Map from '../components/ThurgauMap'
+import Popup from '../components/Popup'
 import {useEffect, useState} from "react"
 import {PrismaClient} from '@prisma/client'
-import MapStyle from '@/styles/ThuraguMap.module.css'
-import Graph from "@/components/Graph";
+import MapStyle from '../styles/ThuraguMap.module.css'
+import Graph from "../components/Graph";
 
 const prisma = new PrismaClient()
 

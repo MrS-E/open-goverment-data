@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import Map from "@/components/Map/";
+import Map from "../components/Map/";
 import {fetch} from "next/dist/compiled/@edge-runtime/primitives/fetch";
 
 export default function Home({age}) {
