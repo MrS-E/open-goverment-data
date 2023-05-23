@@ -1,17 +1,19 @@
 import Head from 'next/head'
 import Map from '../components/ThurgauMap'
 import Popup from '../components/Popup'
-import {useEffect, useState} from "react"
+import React, {useEffect, useState} from "react"
 import {PrismaClient} from '@prisma/client'
 import MapStyle from '../styles/ThuraguMap.module.css'
 import Graph from "../components/Graph";
+// @ts-ignore
+import {Stromproduzenten, Trager} from "../types/global";
 
-const prisma = new PrismaClient()
+const prisma : PrismaClient = new PrismaClient()
 
-export default function Home(props) {
-    const [popup, changePopup] = useState(false)
-    const [display, changeDisplay] = useState({meta:{}, data:{}})
-    useEffect(() => {
+export default function Home(props) :JSX.Element {
+    const [popup, changePopup] = React.useState<boolean>(false)
+    const [display, changeDisplay] = React.useState<{meta:Allgemein, data:Trager}>(null)
+    useEffect(():any => {
         for(let obj of props.energy){
             let doc = document.getElementById(`${obj.meta.nr_gemeinde}`);
             doc.addEventListener('click', () => {
@@ -35,11 +37,11 @@ export default function Home(props) {
                 <h1 className="mb-2 text-center mt-0 text-3xl font-medium leading-tight text-primary">{props.year}</h1>
                 <Map/>
                 <Popup changeTrigger={changePopup} trigger={popup}>
-                    <h3 className="text-2xl">{display.meta.gemeinde_name ? display.meta.gemeinde_name : ""}</h3>
+                    <h3 className="text-2xl">{display ? display.meta.gemeinde_name : ""}</h3>
                     <div className="grid gris-cols-1 md:grid-cols-2">
                         <div className="grid">
                             <p>
-                                <strong>Total </strong> {display.allg.total}%
+                                <strong>Total </strong> {display ? display.meta.total : ""}%
                             </p>
                             <div className="place-items-center">
                                 <table className="hidden md:block">
@@ -50,19 +52,19 @@ export default function Home(props) {
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    {Object.keys(display.traeger).map(e=>{
+                                    {display ? Object.keys(display.data).map((e):React.ReactNode=>{
                                         return(
                                             <tr>
                                                 <td className="pr-1">{(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' ')}</td>
-                                                <td>{display.traeger[e]?display.traeger[e]:0}%</td>
+                                                <td>{display.data[e]?display.data[e]:0}%</td>
                                             </tr>
                                         )
-                                    })}
+                                    }) :  <></>}
                                     </tbody>
                                 </table>
                             </div>
                         </div>                        <div className="grid place-items-center">
-                            <Graph data={{labels:Object.keys(display.data).map(e=>(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' ')),datasets:[{data:Object.values(display.data)}]}}/>
+                            <Graph data={{labels:display?(Object.keys(display.data).map((e):string=>(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' '))):[],datasets:[{data:display?Object.values(display.data):[]}]}}/>
                         </div>
                     </div>
                 </Popup>
@@ -73,21 +75,21 @@ export default function Home(props) {
 
 
 export async function getStaticProps({params}) {
-    function calcTotal(total){
-        this.average = total.reduce((sum,a)=>sum+a.total,0)/total.length
+    function calcTotal(total: {total:number}[]){
+        this.average = total.reduce((sum : number,a: {total: number}):number=>sum+a.total,0)/total.length
 
-        this.max_min = total.reduce((sum,a)=>a.total<this.average?sum+a.total:sum+0,0)/total.reduce((sum,a)=>a.total<this.average?sum+1:sum+0,0)
-        this.mitte_min = total.reduce((sum,a)=>a.total<this.max_min?sum+a.total:sum+0,0)/total.reduce((sum,a)=>a.total<this.max_min?sum+1:sum+0,0)
-        this.min_min = total.reduce((sum,a)=>a.total<this.mitte_min?sum+a.total:sum+0,0)/total.reduce((sum,a)=>a.total<this.mitte_min?sum+1:sum+0,0)
+        this.max_min = total.reduce((sum: number,a: {total: number}) :number=>a.total<this.average?sum+a.total:sum+0,0)/total.reduce((sum: number,a: {total: number}): number=>a.total<this.average?sum+1:sum+0,0)
+        this.mitte_min = total.reduce((sum: number,a: {total: number}):number=>a.total<this.max_min?sum+a.total:sum+0,0)/total.reduce((sum: number,a: {total: number}): number=>a.total<this.max_min?sum+1:sum+0,0)
+        this.min_min = total.reduce((sum: number,a: {total: number}):number=>a.total<this.mitte_min?sum+a.total:sum+0,0)/total.reduce((sum: number,a: {total: number}): number=>a.total<this.mitte_min?sum+1:sum+0,0)
         this.min = total[0].total
 
-        this.min_max = total.reduce((sum,a)=>a.total>this.average?sum+a.total:sum+0,0)/total.reduce((sum,a)=>a.total>this.average?sum+1:sum+0,0)
-        this.mitte_max = total.reduce((sum,a)=>a.total>this.min_max?sum+a.total:sum+0,0)/total.reduce((sum,a)=>a.total>this.min_max?sum+1:sum+0,0)
-        this.max_max = total.reduce((sum,a)=>a.total>this.mitte_max?sum+a.total:sum+0,0)/total.reduce((sum,a)=>a.total>this.mitte_max?sum+1:sum+0,0)
+        this.min_max = total.reduce((sum: number,a:{total: number}): number=>a.total>this.average?sum+a.total:sum+0,0)/total.reduce((sum: number,a:{total: number}): number=>a.total>this.average?sum+1:sum+0,0)
+        this.mitte_max = total.reduce((sum: number,a:{total: number}): number=>a.total>this.min_max?sum+a.total:sum+0,0)/total.reduce((sum: number,a:{total: number}): number=>a.total>this.min_max?sum+1:sum+0,0)
+        this.max_max = total.reduce((sum: number,a:{total: number}): number=>a.total>this.mitte_max?sum+a.total:sum+0,0)/total.reduce((sum: number,a:{total: number}): number=>a.total>this.mitte_max?sum+1:sum+0,0)
         this.max = total[total.length-1].total
         return this
     }
-    async function fetch(type, year, nr){
+    async function fetch(type: string, year:string, nr?:string):Promise<any>{
         switch (type){
             case "total":
                 return await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
@@ -134,7 +136,7 @@ export async function getStaticProps({params}) {
                 })
         }
     }
-    function set_color(data, total){
+    function set_color(data, total) : Allgemein[]{
         total = Object.keys(total).map(el=>{return new Array(total[el], el)}).sort((a,b)=>(a[0] > b[0]) ? 1 : ((b[0] > a[0]) ? -1 : 0))
         const out = []
         for(let d of data) {
@@ -146,9 +148,10 @@ export async function getStaticProps({params}) {
         return out;
     }
 
-    const total= new Object(Object.fromEntries(Object.entries(new calcTotal(await fetch("total", params.id)))))
-    const data = set_color(await fetch("data", params.id), total)
-    const energy = []
+    // @ts-ignore
+    const total: Object= new Object(Object.fromEntries(Object.entries(new calcTotal(await fetch("total", params.id)))))
+    const data:Allgemein[] = set_color(await fetch("data", params.id), total)
+    const energy: Stromproduzenten[] = []
     for(let d of data){
         energy.push({
             meta: d,
@@ -165,7 +168,7 @@ export async function getStaticProps({params}) {
 }
 
 export async function getStaticPaths() {
-     let years = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
+     let years:{jahr: string}[] = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
         orderBy: {
             jahr: 'desc',
         },
@@ -173,8 +176,9 @@ export async function getStaticPaths() {
             jahr: true
         }
     })
+    // @ts-ignore
     years = [...new Set(years)]
-    const paths = years.map(year=>({
+    const paths:{params:{id:string}}[] = years.map((year):{params:{id:string}} =>({
         params: {id: year.jahr.toString()}
     }))
     return {

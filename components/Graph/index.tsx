@@ -1,10 +1,10 @@
 import React from 'react';
 import {Pie} from 'react-chartjs-2';
-import {Chart as ChartJS} from 'chart.js/auto'; //can't remove even if it's unused, doesn't work without
-
+import {Chart, ArcElement} from 'chart.js/auto'; //can't remove even if it's unused, doesn't work without
+Chart.register(ArcElement);
 
 const Graph = (props) => {
-    const options = {
+    const options : any = {
             maintainAspectRatio: false,
             responsive: false,
             plugins: {

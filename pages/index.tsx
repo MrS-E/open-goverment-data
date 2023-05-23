@@ -1,23 +1,26 @@
 import Head from 'next/head'
 import Map from '../components/ThurgauMap'
 import Popup from '../components/Popup'
-import {useEffect, useRef, useState} from "react"
+import React, {useEffect, useRef, useState} from "react"
 import {PrismaClient} from '@prisma/client'
 import MapStyle from '../styles/ThuraguMap.module.css'
 import Slider from '../components/Tailwind/Slider'
 import Graph from "../components/Graph";
+// @ts-ignore
+import {Stromproduzenten} from "../types/global";
+import {GetStaticProps} from "next";
 
 const prisma = new PrismaClient()
 
-export default function Home(props) {
-    const [popup, changePopup] = useState(false)
-    const [display, changeDisplay] = useState({allg:{}, traeger:{}})
-    const [year, changeYear] = useState(props.year.max)
-    const [energy, changeEnergy] = useState(null)
-    useEffect(() => {
+export default function Home(props): JSX.Element {
+    const [popup, changePopup] = React.useState<boolean>(false)
+    const [display, changeDisplay] = React.useState<Stromproduzenten>({allg:{}, traeger:{}})
+    const [year, changeYear] = React.useState<string>(props.year.max as string)
+    const [energy, changeEnergy] = React.useState<Stromproduzenten[]>(null)
+    useEffect(():void => {
         if(energy) {
             for (let obj of energy) {
-                let doc = document.getElementById(`${obj.allg.nr_gemeinde}`);
+                let doc :HTMLElement = document.getElementById(`${obj.allg.nr_gemeinde}`);
                 doc.addEventListener('click', () => {
                     changePopup(true)
                     changeDisplay(obj)
@@ -31,12 +34,12 @@ export default function Home(props) {
             })
         }
     }, [energy])
-    useEffect(()=>{
+    useEffect(():void=>{
         fetch("/api/erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden/" + year)
-            .then(res => res.json())
-            .then(res=>{
+            .then((res) :any => res.json())
+            .then((res):any=>{
                 if(Object.keys(res).includes("error")){
-                    changeYear(props.year.max)
+                    changeYear(props.year.max as string)
                 }else{
                     changeEnergy(res)
                 }
@@ -46,7 +49,7 @@ export default function Home(props) {
         <>
             <Head>
                 <title>Open Government Data</title>
-                <allg name="viewport" content="width=device-width, initial-scale=1"/>
+                <meta name="viewport" content="width=device-width, initial-scale=1"/>
             </Head>
             <main className="relative p-4 grid place-items-center">
                 <h1 className="text-4xl mb-2 text-center mt-0 font-medium leading-tight text-primary">Strom aus erneuerbaren Energieträgern</h1>
@@ -72,7 +75,7 @@ export default function Home(props) {
                                             </tr>
                                         </thead>
                                         <tbody>
-                                        {Object.keys(display.traeger).map(e=>{
+                                        {Object.keys(display.traeger).map((e):React.ReactNode =>{
                                             return(
                                                 <tr>
                                                     <td className="pr-1">{(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' ')}</td>
@@ -85,7 +88,7 @@ export default function Home(props) {
                                 </div>
                             </div>
                             <div className="grid place-items-center">
-                                <Graph data={{labels:Object.keys(display.traeger).map(e=>(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' ')),datasets:[{data:Object.values(display.traeger)}]}}/>
+                                <Graph data={{labels:Object.keys(display.traeger).map((e):string=>(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' ')),datasets:[{data:Object.values(display.traeger)}]}}/>
                             </div>
                         </div>
                     </Popup>
@@ -95,8 +98,8 @@ export default function Home(props) {
     )
 }
 
-export async function getStaticProps() {
-    const year = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
+export async function getStaticProps(){
+    const year: {jahr: string}[] = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
         orderBy: {
             jahr: 'desc',
         },

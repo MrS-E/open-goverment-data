@@ -42,6 +42,10 @@ module.exports = async ()=>{
   }
 
   return nextConfig = {
+    webpack: (config) => {
+      config.resolve.extensions.push('.ts', '.tsx');
+      return config;
+    },
     reactStrictMode: true,
   };
 }

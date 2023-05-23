@@ -1,8 +1,10 @@
 import Head from 'next/head'
 import Map from "../components/Map/";
-import {fetch} from "next/dist/compiled/@edge-runtime/primitives/fetch";
+import Age from "../assets/datasets/sk-stat-57.json"
 
-export default function Home({age}) {
+
+export default function Home(props) : JSX.Element {
+    let age : any = props.age;
     console.log(age)
     return (
         <>
@@ -17,11 +19,9 @@ export default function Home({age}) {
     )
 }
 
-export async function getStaticProps({params}){
-    const req = await fetch('http://localhost:3000/api/age')
-    const data = await req.json();
+export async function getStaticProps ()  {
 
     return{
-        props:{age: data},
+        props:{age: Age},
     }
 }
