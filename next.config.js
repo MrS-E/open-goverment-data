@@ -6,11 +6,10 @@ const chalk = require('chalk');
 module.exports = async ()=>{
   console.log(`- ${chalk.blue('status')} server trying to fetch json`)
   try {
-    const req = await fetch((await (await fetch('https://ckan.opendata.swiss/api/3/action/package_show?id=erneuerbare-elektrizitatsproduktion-nach-energietragern-und-gemeinden')).json()).result.resources.filter(obj => {
+    const data = await(await fetch((await(await fetch('https://ckan.opendata.swiss/api/3/action/package_show?id=erneuerbare-elektrizitatsproduktion-nach-energietragern-und-gemeinden')).json()).result.resources.filter(obj => {
       return obj.media_type === "application/json"
-    })[0].uri);
+    })[0].uri)).json();
     const prisma = new PrismaClient()
-    const data = await req.json();
     await Promise.all(data.map(async d => {
       await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.upsert({
         where: {
