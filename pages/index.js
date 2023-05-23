@@ -59,25 +59,30 @@ export default function Home(props) {
                     <Popup changeTrigger={changePopup} trigger={popup}>
                         <h3 className="text-2xl">{display.allg.gemeinde_name ? display.allg.gemeinde_name : ""}</h3>
                         <div className="grid gris-cols-1 md:grid-cols-2">
-                            <div className="grid place-items-center">
-                                <table className=" hidden md:block">
-                                    <thead>
-                                        <tr>
-                                            <th>Energie Typ</th>
-                                            <th>Prozent</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    {Object.keys(display.traeger).map(e=>{
-                                        return(
+                            <div className="grid">
+                                <p>
+                                    <strong>Total </strong> {display.allg.total}%
+                                </p>
+                                <div className="place-items-center">
+                                    <table className="hidden md:block">
+                                        <thead>
                                             <tr>
-                                                <td>{(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' ')}</td>
-                                                <td>{display.traeger[e]?display.traeger[e]:0}</td>
+                                                <th className="pr-1 text-left">Energie Typ</th>
+                                                <th>Prozent</th>
                                             </tr>
-                                        )
-                                    })}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                        {Object.keys(display.traeger).map(e=>{
+                                            return(
+                                                <tr>
+                                                    <td className="pr-1">{(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' ')}</td>
+                                                    <td>{display.traeger[e]?display.traeger[e]:0}%</td>
+                                                </tr>
+                                            )
+                                        })}
+                                        </tbody>
+                                    </table>
+                                </div>
                             </div>
                             <div className="grid place-items-center">
                                 <Graph data={{labels:Object.keys(display.traeger).map(e=>(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' ')),datasets:[{data:Object.values(display.traeger)}]}}/>
