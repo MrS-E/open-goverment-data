@@ -1,11 +1,8 @@
 import Head from 'next/head'
 import Map from "../components/Map/";
-import Age from "../assets/datasets/sk-stat-57.json"
+import React from "react";
 
-
-export default function Home(props) : JSX.Element {
-    let age : any = props.age;
-    console.log(age)
+export default function Home() : JSX.Element {
     return (
         <>
             <Head>
@@ -13,15 +10,13 @@ export default function Home(props) : JSX.Element {
                 <meta name="viewport" content="width=device-width, initial-scale=1" />
             </Head>
             <main>
-                <Map/>
+                <h1 className="text-4xl mb-2 text-center mt-0 font-medium leading-tight text-primary">Suche für den Idealen Wohnort</h1>
+                <div className="grid place-items-center">
+                    <Map>
+
+                    </Map>
+                </div>
             </main>
         </>
     )
-}
-
-export async function getStaticProps ()  {
-
-    return{
-        props:{age: Age},
-    }
 }
