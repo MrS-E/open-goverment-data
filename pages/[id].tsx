@@ -4,7 +4,7 @@ import Popup from '../components/Popup'
 import React, {useEffect} from "react"
 import {PrismaClient} from '@prisma/client'
 import MapStyle from '../styles/ThuraguMap.module.css'
-import Graph from "../components/Graph";
+import Graph from "../components/Graph/Pie";
 // @ts-ignore
 import {Stromproduzenten, Trager} from "../types/global";
 
@@ -64,7 +64,7 @@ export default function Home(props) :JSX.Element {
                                 </table>
                             </div>
                         </div>                        <div className="grid place-items-center">
-                            <Graph data={{labels:display?(Object.keys(display.data).map((e):string=>(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' '))):[],datasets:[{data:display?Object.values(display.data):[]}]}}/>
+                            <Graph title="Energiemix" data={{labels:display?(Object.keys(display.data).map((e):string=>(e.split('_').map(x=>x.charAt(0).toUpperCase() + x.slice(1))).join(' '))):[],datasets:[{data:display?Object.values(display.data):[]}]}}/>
                         </div>
                     </div>
                 </Popup>
