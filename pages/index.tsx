@@ -47,8 +47,7 @@ export default function Home(props): JSX.Element {
             text.setAttribute("dominant-baseline", "middle");
             text.setAttribute("name", id);
             //text.classList.add(MapStyle.tooltip, MapStyle.none)
-            textPath.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", id)
-            textPath.textContent = content
+s            textPath.textContent = content
             text.appendChild(textPath);
             return text
         }*/
