@@ -24,3 +24,53 @@ model erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden {
 
   @@id([nr_gemeinde, jahr])
 }
+
+model polizeiposten {
+    key Int @unique
+    art String
+    koordinaten String
+}
+
+model schutzraeume{
+    key Int @unique
+    plaetze Int
+    bau String
+    koordinaten String
+}
+
+model notfalltreffpunkte{
+    key Int @unique
+    koordinaten String
+}
+
+model quellfassungen{
+    key Int @unique
+    min Int?
+    max Int?
+    koordinaten String
+}
+
+model strom{
+    key Int @unique
+    koordinaten_liste String
+}
+
+model Risikostelle{
+    key Int @unique
+    koordinaten String
+}
+
+model Strassenverkehrzaehlung{
+    key Int @id @default(autoincrement())
+    jahr String
+    messort Int
+    fahrzeugeProTag Int
+    koordinaten String
+}
+
+model kreisverkehr{
+    key Int @unique
+    name String
+    besitzer String
+    koordinaten String
+}

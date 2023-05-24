@@ -1,0 +1,66 @@
+[
+  {"_comment": "suche datensatz: meta->resource->wfs->search layer-> layer=typeName -> use GetFeature to get data"},
+  {"_comment": "öffentliche Sicherheit"},
+
+  {
+    "name": "Polizeiposten und -postengrenzen ",
+    "wfs.point":"https://ows.geo.tg.ch/geofy_access_proxy/kapopostenkarte?Service=WFS&Version=2.0.0&request=GetFeature&typeName=pgzpostp",
+    "meta":"https://ckan.opendata.swiss/api/3/action/package_show?id=polizeiposten-und-postengrenzen"
+  },
+  {
+    "name": "Schutzräume",
+    "wfs.point": "https://ows.geo.tg.ch/geofy_access_proxy/schutzraeume?Service=WFS&Version=2.0.0&request=GetFeature&typenames=Schutzraeume",
+    "meta": "https://ckan.opendata.swiss/api/3/action/package_show?id=kataster-der-schutzraume1"
+  },
+  {
+    "name":"Notfalltreffpunkte",
+    "wfs.point": "https://ows.geo.tg.ch/geofy_access_proxy/notfalltreffpunkte?Service=WFS&Version=2.0.0&request=GetFeature&typenames=notfalltreffpunkte",
+    "meta": "https://ckan.opendata.swiss/api/3/action/package_show?id=notfalltreffpunkte"
+  },
+
+  {"_comment": "Raum und Natur"},
+  {
+    "name": "Grundwasservorkommen (Quellfassung)",
+    "wfs.point":"https://ows.geo.tg.ch/geofy_access_proxy/grundwasserkarte?Service=WFS&Version=2.0.0&request=GetFeature&typeName=ugwquell",
+    "meta": "https://ckan.opendata.swiss/api/3/action/package_show?id=grundwasservorkommen"
+  },
+  {
+    "name": "Stromversorgung Netzgebiete (Niederspannung",
+    "wfs.list": "https://ows.geo.tg.ch/geofy_access_proxy/stromversorgung_netzgebiete?Service=WFS&Version=2.0.0&request=GetFeature&typeName=netzebene7",
+    "meta": "https://ckan.opendata.swiss/api/3/action/package_show?id=stromversorgung-netzgebiete"
+  },
+  {
+    "name": "Gefahrenhinweiskarte (Risikostellen)",
+    "wfs.point": "https://ows.geo.tg.ch/geofy_access_proxy/gefahrenhinweiskarte?Service=WFS&Version=2.0.0&request=GetFeature&typeName=Risikostelle",
+    "meta": "https://ckan.opendata.swiss/api/3/action/package_show?id=gefahrenhinweiskarte"
+  },
+
+  {"_comment": "Politik und Finanzen"},
+  {
+    "name": "Parteistärken nach Gemeinden",
+    "json": "https://data.tg.ch/api/v2/catalog/datasets/sk-stat-9/exports/json",
+    "meta": "https://ckan.opendata.swiss/api/3/action/package_show?id=grossratswahlen-kanton-thurgau-parteistarken-nach-gemeinden",
+    "_comment": "keine Koordinaten so evtl. nicht nutzbar"
+  },
+
+  {"_comment": "Verkehr"},
+  {
+    "name": "Strassenverkehrszählung",
+    "wpf.point":"https://ows.geo.tg.ch/geofy_access_proxy/strassenverkehrszaehlung?Service=WFS&Version=2.0.0&request=GetFeature&typeName=Messdaten",
+    "meta": "https://ckan.opendata.swiss/api/3/action/package_show?id=strassenverkehrszahlung-standorte-regionales-und-lokales-netz",
+    "_comment": "ms:dtv_agi sind [Fz/Tag] Jahresdurchschnitt"
+  },
+  {
+    "name":"Kreiselkataster",
+    "wfs.point": "https://ows.geo.tg.ch/geofy_access_proxy/kreisel?Service=WFS&Version=2.0.0&request=GetFeature&typeName=kreiselkataster",
+    "meta": "https://ckan.opendata.swiss/api/3/action/package_show?id=kreiselkataster"
+  },
+
+  {"_comment": "Gesellschaft"},
+  {
+    "name": "Deutschkurse ",
+    "wfs.point": "https://ows.geo.tg.ch/geofy_access_proxy/deutschkurse?Service=WFS&Version=2.0.0&request=GetFeature&typeName=deutschkurse",
+    "meta": "https://ckan.opendata.swiss/api/3/action/package_show?id=deutschkurse"
+  }
+
+]
