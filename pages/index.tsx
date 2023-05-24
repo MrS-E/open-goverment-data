@@ -72,7 +72,9 @@ export default function Home(props): JSX.Element {
                     const tooltip:HTMLElement = document.getElementById("tooltip")
                     tooltip.classList.remove(MapStyle.none)
                     tooltip.innerText = obj.allg.gemeinde_name
+                    //@ts-ignore
                     tooltip.style.top = (e.target.getBoundingClientRect().top+(e.target.getBoundingClientRect().height/2)-(tooltip.offsetHeight/2))+"px"
+                    //@ts-ignore
                     tooltip.style.left = (e.target.getBoundingClientRect().left+((e.target.getBoundingClientRect().width)/2)-(tooltip.offsetWidth/2))+"px"
                 })
                 doc.addEventListener("mouseout", (e):void=>{
