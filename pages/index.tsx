@@ -34,16 +34,51 @@ export default function Home(props): JSX.Element {
     const [energy, changeEnergy] = React.useState<Stromproduzenten[]>(null)
     const [topAndWorst, changeTop] = React.useState<TopAndWorst>(null)
     useEffect(():void => {
+        /*function add_text(id:string, content:string) :SVGTextElement {
+            const text:SVGTextElement = document.createElementNS("http://www.w3.org/2000/svg", "text");
+            const textPath:SVGTextPathElement = document.createElementNS("http://www.w3.org/2000/svg", "textPath");
+            //@ts-ignore
+            const path :SVGPathElement = document.getElementById(id)
+            const pathLength:number = path.getTotalLength();  // Get the total length of the path
+            const point :DOMPoint = path.getPointAtLength(pathLength / 2);  // Get the midpoint of the path
+            text.setAttribute("x", String(point.x));
+            text.setAttribute("y", String(point.y));
+            text.setAttribute("text-anchor", "middle");
+            text.setAttribute("dominant-baseline", "middle");
+            text.setAttribute("name", id);
+            //text.classList.add(MapStyle.tooltip, MapStyle.none)
+            textPath.setAttributeNS("http://www.w3.org/1999/xlink", "xlink:href", id)
+            textPath.textContent = content
+            text.appendChild(textPath);
+            return text
+        }*/
         if(energy) {
             for (let obj of energy) {
                 let doc :HTMLElement = document.getElementById(`${obj.allg.nr_gemeinde}`);
                 doc.addEventListener('click', () => {
                     changePopup(true)
                     changeDisplay(obj)
-
                 })
                 doc.setAttributeNS(null, 'class', '')
                 doc.classList.add(MapStyle[obj.allg.color])
+                /*doc.parentNode.appendChild(add_text(doc.id, obj.allg.gemeinde_name))
+                doc.addEventListener("mouseenter", (e):void=>{
+                    document.querySelector("text[name='"+e.target.id+"']").classList.toggle(MapStyle.none)
+                })
+                doc.addEventListener("mouseout", (e):void=>{
+                    document.querySelector("text[name='"+e.target.id+"']").classList.toggle(MapStyle.none)
+                })*/
+                doc.addEventListener("mouseenter", (e):void=>{
+                    const tooltip:HTMLElement = document.getElementById("tooltip")
+                    tooltip.classList.remove(MapStyle.none)
+                    tooltip.innerText = obj.allg.gemeinde_name
+                    tooltip.style.top = (e.target.getBoundingClientRect().top+(e.target.getBoundingClientRect().height/2)-(tooltip.offsetHeight/2))+"px"
+                    tooltip.style.left = (e.target.getBoundingClientRect().left+((e.target.getBoundingClientRect().width)/2)-(tooltip.offsetWidth/2))+"px"
+                })
+                doc.addEventListener("mouseout", (e):void=>{
+                    const tooltip:HTMLElement = document.getElementById("tooltip")
+                    tooltip.classList.add(MapStyle.none)
+                })
             }
             document.getElementsByClassName(MapStyle.lakes)[0].addEventListener('click', () => {
                 alert("Geehrter Nutzer der Bodensee ist keine Gemeinde. \nBitte klicken Sie nur Gemeinden an.")
@@ -76,6 +111,7 @@ export default function Home(props): JSX.Element {
                 <h1 className="text-4xl mb-2 text-center mt-0 font-medium leading-tight text-primary">Strom aus erneuerbaren Energieträgern</h1>
                 <div className="w-[90vw]">
                     <Map/>
+                    <span id="tooltip" className={MapStyle.tooltip +" "+ MapStyle.none}></span>
                     <div className="w-[90vw] block">
                         <div className="p-2 w-[2vw] float-left">{year}</div>
                         <div className="p-1 w-[80vw] float-right">

@@ -1,13 +1,15 @@
 .lakes path{
     fill: deepskyblue;
 }
-
 .municipalities path {
     position: relative;
     //fill: green;
     box-shadow: 1px 1px 1px black;
     stroke: black;
-    stroke-width: 0.75px;
+    stroke-width: .75px;
+}
+.municipalities path:hover{
+    fill: aquamarine;
 }
 
 .min{
@@ -36,4 +38,15 @@
 }
 .max{
     fill: #00FF00;
+}
+
+.tooltip{
+    color: black;
+    pointer-events: none;
+    position: absolute;
+    font-size: smaller;
+    font-weight: bolder;
+}
+.none{
+    display: none;
 }
