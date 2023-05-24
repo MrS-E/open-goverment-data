@@ -7,19 +7,32 @@ import MapStyle from '../styles/ThuraguMap.module.css'
 import Slider from '../components/Tailwind/Slider'
 import Graph from "../components/Graph/Pie";
 import Line from "../components/Graph/Line"
+import Bar from "../components/Graph/Bar"
 import {GetStaticProps} from "next";
 // @ts-ignore
 import {Stromproduzenten} from "../types/global";
-import _default from "chart.js/dist/plugins/plugin.legend";
-import labels = _default.defaults.labels;
+
 
 const prisma = new PrismaClient()
+type TopAndWorst={
+    top:[{
+        nr_gemeinde: string
+        gemeinde_name: string
+        total: number
+    } ],
+    worst: [{
+        nr_gemeinde:string,
+        gemeinde_name:string
+        total:number
+    }]
+}
 
 export default function Home(props): JSX.Element {
     const [popup, changePopup] = React.useState<boolean>(false)
     const [display, changeDisplay] = React.useState<Stromproduzenten>({allg:{}, traeger:{}})
     const [year, changeYear] = React.useState<string>(props.year.max as string)
     const [energy, changeEnergy] = React.useState<Stromproduzenten[]>(null)
+    const [topAndWorst, changeTop] = React.useState<TopAndWorst[]>(null)
     useEffect(():void => {
         if(energy) {
             for (let obj of energy) {
@@ -46,6 +59,11 @@ export default function Home(props): JSX.Element {
                 }else{
                     changeEnergy(res)
                 }
+            })
+        fetch("/api/erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden/topAndWorst?amount=5")
+            .then((res) :any => res.json())
+            .then((res):any=>{
+                changeTop(res)
             })
     }, [year])
     return (
@@ -104,6 +122,7 @@ export default function Home(props): JSX.Element {
                 <div className="grid grid-cols-1 md:grid-cols-2">
                     <div>
                         <h3 className="text-2xl mb-2 text-center mt-0 font-medium leading-tight">Top 5 und Worst 5 Gemeinden</h3>
+                        <Bar data={{labels:null,datasets:[{label:null,data:[]}]}} title="Beste und Schlechteste Gemeinden"/>
                     </div>
                     <div>
                         <h3 className="text-2xl mb-2 text-center mt-0 font-medium leading-tight">Verlauf Total insgesamt</h3>
