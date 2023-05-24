@@ -11,15 +11,28 @@ const Graph = (props) : JSX.Element => {
                 display: true,
                 position: 'top' as const,
             },
-
             title: {
                 display: true,
                 text: props.title?props.title:""
-            }
+            },
         },
+        scales: {
+            x: {
+                title: {
+                    display: true,
+
+                },
+            },
+            y: {
+                title: {
+                    display: true,
+                },
+
+            }
+        }
     }
     return (
-        <Line data={props.data} options={options}/>
+        <Line height="400px" data={props.data} options={options}/>
     );
 };
 

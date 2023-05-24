@@ -32,7 +32,7 @@ export default function Home(props): JSX.Element {
     const [display, changeDisplay] = React.useState<Stromproduzenten>({allg:{}, traeger:{}})
     const [year, changeYear] = React.useState<string>(props.year.max as string)
     const [energy, changeEnergy] = React.useState<Stromproduzenten[]>(null)
-    const [topAndWorst, changeTop] = React.useState<TopAndWorst[]>(null)
+    const [topAndWorst, changeTop] = React.useState<TopAndWorst>(null)
     useEffect(():void => {
         if(energy) {
             for (let obj of energy) {
@@ -60,7 +60,7 @@ export default function Home(props): JSX.Element {
                     changeEnergy(res)
                 }
             })
-        fetch("/api/erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden/topAndWorst?amount=5")
+        fetch("/api/erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden/topAndWorst?amount=5&year="+year)
             .then((res) :any => res.json())
             .then((res):any=>{
                 changeTop(res)
@@ -119,10 +119,11 @@ export default function Home(props): JSX.Element {
                         </div>
                     </Popup>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2">
+                <hr/>
+                <div className="grid grid-cols-1 md:grid-cols-2 place-items-stretch">
                     <div>
                         <h3 className="text-2xl mb-2 text-center mt-0 font-medium leading-tight">Top 5 und Worst 5 Gemeinden</h3>
-                        <Bar data={{labels:null,datasets:[{label:null,data:[]}]}} title="Beste und Schlechteste Gemeinden"/>
+                        <Bar data={{labels:topAndWorst?(topAndWorst.top.map((e):string=>e.gemeinde_name)).concat(topAndWorst.worst.reverse().map((e):string=>e.gemeinde_name)):null,datasets:[{label:"Total erneuerbare Energie in Prozent",data:topAndWorst?(topAndWorst.top.map((e):number=>e.total)).concat(topAndWorst.worst.reverse().map((e):number=>e.total)):null}]}} title="Beste und Schlechteste Gemeinden"/>
                     </div>
                     <div>
                         <h3 className="text-2xl mb-2 text-center mt-0 font-medium leading-tight">Verlauf Total insgesamt</h3>
