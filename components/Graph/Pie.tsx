@@ -1,9 +1,9 @@
 import React from 'react';
 import {Pie} from 'react-chartjs-2';
-import {Chart, ArcElement} from 'chart.js/auto'; //can't remove even if it's unused, doesn't work without
+import {Chart, ArcElement} from 'chart.js/auto';
 Chart.register(ArcElement);
 
-const Graph = (props) => {
+const Graph = (props) : JSX.Element => {
     const options : any = {
             maintainAspectRatio: false,
             responsive: false,
@@ -16,7 +16,7 @@ const Graph = (props) => {
                 },
                 title: {
                     display: true,
-                    text: 'Energiemix'
+                    text: props.title?props.title:""
                 }
             },
         }
