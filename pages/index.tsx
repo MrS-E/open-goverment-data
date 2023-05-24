@@ -72,7 +72,7 @@ s            textPath.textContent = content
                     tooltip.classList.remove(MapStyle.none)
                     tooltip.innerText = obj.allg.gemeinde_name
                     //@ts-ignore
-                    tooltip.style.top = (e.target.getBoundingClientRect().top+(e.target.getBoundingClientRect().height/2)-(tooltip.offsetHeight/2))+"px"
+                    tooltip.style.top = (e.target.getBoundingClientRect().top+(e.target.getBoundingClientRect().height/2)-(tooltip.offsetHeight/2)+(window.pageYOffset||document.documentElement.scrollTop))+"px"
                     //@ts-ignore
                     tooltip.style.left = (e.target.getBoundingClientRect().left+((e.target.getBoundingClientRect().width)/2)-(tooltip.offsetWidth/2))+"px"
                 })
