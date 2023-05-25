@@ -6,7 +6,7 @@ import {SVGOverlay} from "react-leaflet";
 export default function Home() : JSX.Element {
     const [polizei, changePolizei] = React.useState<object>(null)
     useEffect( (): void=>{
-        fetch('/api/polizeiposten/all')
+        fetch('/api/polizeiposten')
             .then(response=>response.json())
             .then(res=>changePolizei(res))
     },[])
@@ -19,8 +19,10 @@ export default function Home() : JSX.Element {
             </Head>
             <main>
                 <h1 className="text-4xl mb-2 text-center mt-0 font-medium leading-tight text-primary">Suche für den Idealen Wohnort</h1>
-                <div className="grid place-items-center">
-                        <Map marker={[polizei]}/>
+                <div className="grid grid-cols-2 place-items-center">
+                    <div>
+                        <Map marker={[{type:"polizei", data: polizei, color:"red", radius:1000}]}/>
+                    </div>
                 </div>
             </main>
         </>
