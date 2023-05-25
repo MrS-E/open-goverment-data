@@ -8,8 +8,6 @@ import Graph from "../components/Graph/Pie";
 // @ts-ignore
 import {Stromproduzenten, Trager} from "../types/global";
 
-const prisma : PrismaClient = new PrismaClient()
-
 export default function Home(props) :JSX.Element {
     const [popup, changePopup] = React.useState<boolean>(false)
     const [display, changeDisplay] = React.useState<{meta:Allgemein, data:Trager}>(null)
@@ -75,6 +73,7 @@ export default function Home(props) :JSX.Element {
 
 
 export async function getStaticProps({params}) {
+    const prisma : PrismaClient = new PrismaClient()
     function calcTotal(total: {total:number}[]){
         this.average = total.reduce((sum : number,a: {total: number}):number=>sum+a.total,0)/total.length
 
@@ -158,6 +157,9 @@ export async function getStaticProps({params}) {
             data: await fetch("traeger", params.id, d.nr_gemeinde)
         })
     }
+
+    await prisma.$disconnect()
+
     return {
         props: {
             year: params.id,
@@ -168,7 +170,8 @@ export async function getStaticProps({params}) {
 }
 
 export async function getStaticPaths() {
-     let years:{jahr: string}[] = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
+    const prisma : PrismaClient = new PrismaClient()
+    let years:{jahr: string}[] = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
         orderBy: {
             jahr: 'desc',
         },
@@ -176,6 +179,8 @@ export async function getStaticPaths() {
             jahr: true
         }
     })
+    await prisma.$disconnect()
+
     // @ts-ignore
     years = [...new Set(years)]
     const paths:{params:{id:string}}[] = years.map((year):{params:{id:string}} =>({

@@ -95,5 +95,5 @@ export default async function handler(req : NextApiRequest, res: NextApiResponse
     }else{
         res.status(406).json({error: "year not found"})
     }
-
+    await prisma.$disconnect()
 }

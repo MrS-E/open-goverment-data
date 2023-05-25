@@ -12,8 +12,6 @@ import {GetStaticProps} from "next";
 // @ts-ignore
 import {Stromproduzenten} from "../types/global";
 
-
-const prisma = new PrismaClient()
 type TopAndWorst={
     top:[{
         nr_gemeinde: string
@@ -173,7 +171,8 @@ s            textPath.textContent = content
 }
 
 export async function getStaticProps(){
-    let year: {jahr: string}[] = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
+    const prisma = new PrismaClient()
+    const year: {jahr: string}[] = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
         orderBy: {
             jahr: 'desc',
         },
@@ -181,7 +180,6 @@ export async function getStaticProps(){
             jahr: true
         }
     })
-
     const verlauf:{jahr: string, total: number}[] = await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.findMany({
         orderBy:{
             jahr: 'desc'
@@ -191,6 +189,8 @@ export async function getStaticProps(){
             total: true
         }
     })
+    await prisma.$disconnect()
+
     const label: string[] = []
     const data: number[] = []
     for(let y of year){

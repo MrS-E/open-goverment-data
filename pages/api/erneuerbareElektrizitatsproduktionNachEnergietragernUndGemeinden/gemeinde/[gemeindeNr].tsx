@@ -37,4 +37,6 @@ export default async function handler(req : NextApiRequest, res: NextApiResponse
         data: data
     }
     res.status(200).send(out)
+    await prisma.$disconnect()
+
 }

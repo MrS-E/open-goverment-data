@@ -21,4 +21,5 @@ export default async function handler(req : NextApiRequest, res: NextApiResponse
         worst: { nr_gemeinde: string; gemeinde_name: string; total: number }[]
     } = req.query.amount?{top: gemeinden.slice(0, parseInt(req.query.amount as string)), worst: gemeinden.reverse().slice(0, parseInt(req.query.amount as string))}:{top: gemeinden.slice(0, 5), worst: gemeinden.reverse().slice(0, 5)}
     res.status(200).json(out)
+    await prisma.$disconnect()
 }
