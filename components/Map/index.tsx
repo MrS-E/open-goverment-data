@@ -1,5 +1,5 @@
 import dynamic from "next/dynamic";
 
-const Map: any = dynamic(()=> import('./Map'), {ssr:false})
+const Map: any = dynamic(()=> import('./MapParent'), {ssr:false})
 
 export default Map
