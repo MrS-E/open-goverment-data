@@ -4,8 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
-    "prebuild": "node db-loader.js",
+    "build": "prisma migrate deploy && next build",
     "start": "next start",
     "migrate": "prisma migrate dev",
     "lint": "next lint"

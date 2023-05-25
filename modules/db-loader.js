@@ -1,12 +1,11 @@
 const jsdom = require("jsdom");
 const fetch = require('node-fetch');
 const {PrismaClient} = require('@prisma/client')
+const prisma = new PrismaClient()
 
 class Reader{
-    constructor(type, url, attributes, schema) { //attributes = [{xml:, db:}]
-        this.init(type, url, attributes, schema)
-    }
-    async init(type, url, attributes, schema){
+    constructor() {}
+    async init(type, url, attributes, schema){ //attributes = [{xml:, db:}]
         switch(type){
             case"xml":
                 const xmlDoc = this.getXML(await this.fetchData("xml", url))
@@ -56,7 +55,6 @@ class Reader{
         }
     }
     writeDB(data, schema){
-        const prisma = new PrismaClient()
         Promise.all(data.map(e=>{
             return prisma[schema].upsert({
                 where: e.where?e.where:{},
@@ -80,7 +78,6 @@ async function fetch_main(){
         return obj.media_type === "application/json"
     })[0].uri)).json();
     await Promise.all(data.map(async d => {
-        const prisma = new PrismaClient()
         await prisma.erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden.upsert({
             where: {
                 nr_gemeinde_jahr: {
@@ -110,9 +107,15 @@ async function fetch_main(){
 }
 
 module.exports = function () {
-    Promise.all([
-    new Reader("main"),
-    new Reader("xml", "https://ows.geo.tg.ch/geofy_access_proxy/kapopostenkarte?Service=WFS&Version=2.0.0&request=GetFeature&typeName=pgzpostp",
+    return Promise.all([
+    new Reader().init("main"),
+    new Reader().init("xml", "https://ows.geo.tg.ch/geofy_access_proxy/kapopostenkarte?Service=WFS&Version=2.0.0&request=GetFeature&typeName=pgzpostp",
         [{db: "key", xml: "ms:objectid"}, {db: "art", xml: "ms:art"}, {db: "koordinaten", xml: "gml:pos"}],
         "polizeiposten")])
+        .catch(async (err)=>{
+            await prisma.$disconnect()
+            throw err})
+        .then(async ()=>{
+            await prisma.$disconnect()
+        })
 }
