@@ -26,50 +26,50 @@ model erneuerbareElektrizitatsproduktionNachEnergietragernUndGemeinden {
 }
 
 model polizeiposten {
-    key Int @unique
+    key String @unique
     art String
     koordinaten String
 }
 
 model schutzraeume{
-    key Int @unique
-    plaetze Int
+    key String @unique
+    plaetze String
     bau String
     koordinaten String
 }
 
 model notfalltreffpunkte{
-    key Int @unique
+    key String @unique
     koordinaten String
 }
 
 model quellfassungen{
-    key Int @unique
-    min Int?
-    max Int?
+    key String @unique
+    min String?
+    max String?
     koordinaten String
 }
 
 model strom{
-    key Int @unique
+    key String @unique
     koordinaten_liste String
 }
 
 model Risikostelle{
-    key Int @unique
+    key String @unique
     koordinaten String
 }
 
 model Strassenverkehrzaehlung{
     key Int @id @default(autoincrement())
     jahr String
-    messort Int
+    messort String
     fahrzeugeProTag Int
     koordinaten String
 }
 
 model kreisverkehr{
-    key Int @unique
+    key String @unique
     name String
     besitzer String
     koordinaten String
