@@ -16,6 +16,9 @@ module.exports = {
         '5xl': '3.052rem',
       }
     },
+    colors: {
+      transparentBlack: '#0000007F'
+    }
   },
   plugins: [],
 }

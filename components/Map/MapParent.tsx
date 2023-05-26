@@ -35,9 +35,10 @@ export default function Home(): JSX.Element {
         show: boolean,
         color: string,
         radius: number
-    }>({show: false, color: "#fcba03", radius: 2000})
+    }>({show: true, color: "#fcba03", radius: 2000})
     const [rerender, doRerender] = React.useState<number>(0)
     const [loading, triggerLoading] = React.useState<boolean>(false)
+    const [points, changePoints] = React.useState<number[]>(null)
 
     const handlePolizeiChange = (e): void => {
         const name = e.target.name
@@ -51,9 +52,18 @@ export default function Home(): JSX.Element {
         doRerender(rerender + 1)
         changePolizeiState(obj)
     }
-    const handleCalc = (e) =>{
-        triggerLoading(true)
-        document.getElementById("map").classList.add("hidden")
+    const handleCalc = (e) :void =>{
+        triggerLoading(true) //fixme loading value does not change, so loading screen not appear
+        console.log(loading)
+        document.getElementById("map").classList.add("hidden");
+        console.log(loading)
+        changePoints(calculate([{cords: polizei.map(e=>e.coordinates), dist: polizeiState.radius, type:"polizei"}]))
+        console.log(loading)
+        document.getElementById("map").classList.remove("hidden");
+        console.log(loading)
+        triggerLoading(false)
+        console.log(loading)
+        doRerender(rerender+1)
     }
 
     useEffect((): void => {
@@ -61,7 +71,6 @@ export default function Home(): JSX.Element {
             .then(response => response.json())
             .then(res => changePolizei(res))
     }, [])
-    console.log(polizei)
     return (
         <>
             <h1 className="text-4xl mb-2 text-center mt-0 font-medium leading-tight text-primary">Suche für den Idealen
@@ -74,7 +83,7 @@ export default function Home(): JSX.Element {
                 <div className="p-2">
                     <div id="map">
                         <Map key={rerender}>
-                            <LayerGroup>
+                            {/*<LayerGroup>
                                 <Rectangle bounds={ThurgauGenauRecht[0]}/>
                                 <Rectangle bounds={ThurgauGenauRecht[1]}/>
                                 <Rectangle bounds={ThurgauGenauRecht[2]}/>
@@ -88,10 +97,14 @@ export default function Home(): JSX.Element {
                                 <Rectangle bounds={ThurgauGenauRecht[10]}/>
 
                                 <Rectangle pathOptions={{color:"black"}} bounds={ThurgauRecht}/>
+                            </LayerGroup>*/}
+                            <LayerGroup>
+                                {/*@ts-ignore*/}
+                                {polizei && polizeiState.show ? polizei.map((e, key) => <div key={key}><Circle pathOptions={{color: polizeiState.color}} radius={polizeiState.radius} center={e.coordinates}><Circle pathOptions={{color: "red"}} radius={0} center={e.coordinates}/></Circle></div>) : <></>}
                             </LayerGroup>
                             <LayerGroup>
                                 {/* @ts-ignore*/}
-                                {polizei && polizeiState.show ? polizei.map(e => <Circle pathOptions={{color: polizeiState.color}} radius={polizeiState.radius} center={e.coordinates}><Circle pathOptions={{color: "red"}} radius={0} center={e.coordinates}/></Circle>) : <></>}
+                                {points? <Marker position={points} icon={customIcon}></Marker>:""}
                             </LayerGroup>
                         </Map>
                     </div>
@@ -99,7 +112,6 @@ export default function Home(): JSX.Element {
                 <div>
                     <div className="block">
                         <div className="flex">
-                            {/*<input className="mr-2" type="checkbox" name="show" checked={polizeiState.show} onChange={handlePolizeiChange}/>*/}
                             <label>Polizeistationen (Inkludiert):</label>
                         </div>
                         <div className="block ml-[3rem]">
@@ -153,55 +165,92 @@ export default function Home(): JSX.Element {
     )
 }
 
-function calculate(needed: {cords: number[], dist:number}[]):number[][]{ //dist in m
-    const stepX:number = (ThurgauRecht[0][0]-ThurgauRecht[1][0])/1000
-    const stepY:number = (ThurgauRecht[0][1]-ThurgauRecht[1][1])/1000
+function calculate(needed: {cords: number[][], dist:number, type:string}[]):number[]{ //dist in m
+    const stepX:number = (ThurgauRecht[0][0]>ThurgauRecht[1][0]?ThurgauRecht[0][0]-ThurgauRecht[1][0]:ThurgauRecht[1][0]-ThurgauRecht[0][0])/1000
+    const stepY:number = (ThurgauRecht[0][1]>ThurgauRecht[1][1]?ThurgauRecht[0][1]-ThurgauRecht[1][1]:ThurgauRecht[1][1]-ThurgauRecht[0][1])/1000
     const checkPoint: number[][] = []
-    const pointsToLive:number[][] = []
+    const checkPoint2: {point:any[], test:object[]}[] = []
+    let pointsToLive:number[] = []
     //generate checkPoints
     for(let d of ThurgauGenauRecht){
         let countX = 0
-        while((d[0][0]<d[1][0])?(d[0][0]+countX*stepX<d[1][0]):(d[0][0]>d[1][0]+countX*stepX)){
-            let countY = 0
-            let x1 : number
-            let x2 : number
-            if(d[0][0]<d[1][0]){
-                x1 = d[0][0] + countX*stepX
-                x2 = d[0][0] + (countX+1)*stepX
-            }else{
-                x1 = d[1][0] + countX*stepX
-                x2 = d[1][0] + (countX+1)*stepX
-            }
-            while ((d[0][1]<d[1][1])?(d[0][1]+countY*stepY<<d[1][1]):(d[0][1]>d[1][1]+countY*stepY)){
-                let y1:number
-                let y2:number
-                if(d[0][1]<d[1][1]){
-                    y1 = d[0][1] + countX*stepX
-                    y2 = d[0][1] + (countX+1)*stepX
+        if(d[0][0]<d[1][0]) {
+            while ((d[0][0] + (countX * stepX)) < d[1][0]) {
+                let countY = 0
+                let x1: number = d[0][0] + countX * stepX
+                let x2: number = d[0][0] + (countX + 1) * stepX
+                if((d[0][1] < d[1][1])) {
+                    while ((d[0][1] + (countY*stepY)) < d[1][1]) {
+                        let y1: number = d[0][1] + countX * stepX
+                        let y2: number = d[0][1] + (countX + 1) * stepX
+                        countY++
+                        checkPoint.push([(x1 + x2) / 2, (y1 + y2) / 2])
+                    }
                 }else{
-                    y1 = d[1][1] + countX*stepX
-                    y2 = d[1][1] + (countX+1)*stepX
+                    while (d[0][1] > (d[1][1]+ (countY*stepY))) {
+                        let y1: number = d[1][1] + countX * stepX
+                        let y2: number = d[1][1] + (countX + 1) * stepX
+                        countY++
+                        checkPoint.push([(x1 + x2) / 2, (y1 + y2) / 2])
+                    }
                 }
-                checkPoint.push([(x1 + x2) / 2,(y1 + y2) / 2])
+                countX++
+            }
+        }else{
+            while (d[0][0] > (d[1][0] + (countX * stepX))) {
+                let countY = 0
+                let x1: number = d[1][0] + countX * stepX
+                let x2: number = d[1][0] + (countX + 1) * stepX
+                if((d[0][1] < d[1][1])) {
+                    while ((d[0][1] + (countY*stepY)) < d[1][1]) {
+                        let y1: number = d[0][1] + countX * stepX
+                        let y2: number = d[0][1] + (countX + 1) * stepX
+                        countY++
+                        checkPoint.push([(x1 + x2) / 2, (y1 + y2) / 2])
+                    }
+                }else{
+                    while (d[0][1] > d[1][1] + ((countY*stepY))) {
+                        let y1: number = d[1][1] + countX * stepX
+                        let y2: number = d[1][1] + (countX + 1) * stepX
+                        countY++
+                        checkPoint.push([(x1 + x2) / 2, (y1 + y2) / 2])
+                    }
+                }
+                countX++
             }
         }
     }
     //check Points
     for(let point of checkPoint){
-        let test:boolean[] = []
+        const test : {forfilled:boolean, dist:number, type:string}[] = []
         for(let n of needed){
-            const dx : number = 111.3 * (point[0]-n.cords[0])
-            const dy :number = 71.5 * (point[1]- n.cords[1])
-            let km :number = Math.sqrt(dx * dx + dy * dy)
-            if(km<0) km = km * (-1)
-            if(km>=n.dist/1000){ //todo distance must also be saved somewhere for later comparison to find optimal point not just all possible points
-                test.push(true)
+            let min:number = null
+            for(let c of n.cords) {
+                const dx: number = 111.3 * (point[0] - c[0])
+                const dy: number = 71.5 * (point[1] - c[1])
+                let km: number = Math.sqrt(dx * dx + dy * dy)
+                if (km < 0) km = km * (-1)
+                if(min==null) min = km
+                if(km<min){
+                    min=km
+                }
+            }
+            if(min<=n.dist){
+                test.push({forfilled:true, dist:min, type:n.type})
             }else{
-                test.push(false)
+                test.push({forfilled:false, dist:min, type:n.type})
             }
         }
-        if(test.every(e => e === true)){
-            pointsToLive.push(point)
+        if(test.every(e=>e.forfilled===true)) checkPoint2.push({point: point, test:test})
+    }
+    let min:number
+    for(let p of checkPoint2){
+        // @ts-ignore
+        let pmin = p.test.reduce((sum,obj)=>sum +obj.dist,0)/p.test.length
+        if(!min) min = pmin
+        if(pmin<min) {
+            min = pmin
+            pointsToLive = p.point
         }
     }
     return pointsToLive
