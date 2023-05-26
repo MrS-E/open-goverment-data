@@ -52,16 +52,17 @@ export default function Home(): JSX.Element {
         doRerender(rerender + 1)
         changePolizeiState(obj)
     }
-    const handleCalc = (e) :void =>{
-        triggerLoading(true) //fixme loading value does not change, so loading screen not appear
+    const handleCalc = async (e) :Promise<void> =>{
+        console.log("HEY")
+        await triggerLoading(true)
         console.log(loading)
         document.getElementById("map").classList.add("hidden");
         console.log(loading)
-        changePoints(calculate([{cords: polizei.map(e=>e.coordinates), dist: polizeiState.radius, type:"polizei"}]))
+        await changePoints(calculate([{cords: polizei.map(e=>e.coordinates), dist: polizeiState.radius, type:"polizei"}]))
         console.log(loading)
         document.getElementById("map").classList.remove("hidden");
         console.log(loading)
-        triggerLoading(false)
+        await triggerLoading(false)
         console.log(loading)
         doRerender(rerender+1)
     }
@@ -137,7 +138,8 @@ export default function Home(): JSX.Element {
                     </div>
                 </div>
             </div>
-            {loading?<div className="fixed top-0 left-0 w-[100vw] h-[100vh] bg-transparentBlack flex justify-center items-center">
+            {console.log("Before:", loading)}
+            {loading && <div className="fixed top-0 left-0 w-[100vw] h-[100vh] bg-transparentBlack flex justify-center items-center">
                 <div className="relative overflow-hidden bg-white p-[3vmax] w-max-[75vw]">
                     {/*spinner frame from: https://tailwind-elements.com/docs/standard/components/spinners/*/}
                     <svg className="w-[50vmin] h-[50vmin] animate-spin text-indigo-400" viewBox="0 0 24 24" fill="none"
@@ -160,7 +162,7 @@ export default function Home(): JSX.Element {
                               stroke-linecap="round" stroke-linejoin="round"></path>
                     </svg>
                 </div>
-            </div>:""}
+            </div>}
         </>
     )
 }
