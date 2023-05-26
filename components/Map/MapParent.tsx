@@ -78,7 +78,7 @@ export default function Home(): JSX.Element {
                 Wohnort</h1>
             <p className="text-center break-words p-2">Diese Seite ist keine fertig entwickeltes Feature, dies ist nur
                 eine "Proof of
-                Concept" Seite. Dies hat zur Folge das nur zei Datensätze mit einbezogen werden und das UI nicht fertig
+                Concept" Seite. Dies hat zur Folge das nur ein Datensatz mit einbezogen wird und das UI nicht fertig
                 ausgestaltet wurde.</p>
             <div className="grid grid-cols-1 md:grid-cols-2 place-items-center">
                 <div className="p-2">
@@ -111,7 +111,7 @@ export default function Home(): JSX.Element {
                     </div>
                 </div>
                 <div>
-                    <div className="block">
+                    <div className="block p-2">
                         <div className="flex">
                             <label>Polizeistationen (Inkludiert):</label>
                         </div>

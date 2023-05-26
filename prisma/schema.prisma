@@ -55,12 +55,12 @@ model strom{
     koordinaten_liste String
 }
 
-model Risikostelle{
+model risikostelle{
     key String @unique
     koordinaten String
 }
 
-model Strassenverkehrzaehlung{
+model strassenverkehrzaehlung{
     key Int @id @default(autoincrement())
     jahr String
     messort String
