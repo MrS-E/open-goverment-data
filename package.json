@@ -8,7 +8,8 @@
     "build": "prisma migrate deploy && next build",
     "production": "next start",
     "migrate": "prisma migrate dev",
-    "lint": "next lint"
+    "lint": "next lint",
+    "export": "next export"
   },
   "dependencies": {
     "@prisma/client": "^4.14.1",
